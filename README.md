@@ -11,17 +11,16 @@
 🏠 [活動網頁](tiny.cc/RiTW2020) <br>
 📚 [資料來源](https://github.com/gtonychuo/RiTW108) <br>
 🎯 內容大綱：
-
 + RiTW資料集內容和使用方式(卓雍然)
 + R的圖資資料結構(卓雍然)
 + 圖形資料框的運算方法：sf套件教學(夏宗麟)
 + R的互動地圖套件：
   + tmap：高雄市輕軌捷運沿線房價研究(沈佳蒨)
-  + leaflet.minicharts：台灣政府預算支出分析(2011-2019)(唐思琪) [play the shinyapps](https://ritatang.shinyapps.io/twGovExp/)
+  + leaflet.minicharts：台灣政府預算支出分析(2011-2019)(唐思琪) [開啟Shiny App](https://ritatang.shinyapps.io/twGovExp/)
 
 ![tmap](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/tmap.png)  <br>
 ![leaflet.minicharts1](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts1.png)  <br>
-![leaflet.minicharts2](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts1.png)  <br>
+![leaflet.minicharts2](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts2.png)  <br>
 
   
 ### RiTW2020#2 地理事件樣態分析：高雄房型、房價樣態分佈
