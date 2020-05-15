@@ -10,7 +10,6 @@ R：愛台灣線上研討會 RiTW2020#1 <br>
 🎤 線上直播： youtu.be/DrB_t3Il7zo <br>
 🏠 活動網頁：tiny.cc/RiTW2020 <br>
 🎯 內容大綱： <br>
-
 + RiTW資料集內容和使用方式 
 + R的圖資資料結構 
 + 圖形資料框的運算方法 
@@ -26,5 +25,5 @@ R：愛台灣線上研討會 RiTW2020#1 <br>
 ### 2. tmap：高雄市輕軌捷運沿線房價研究
 作者：沈佳蒨
 
-### 3. leaflet.minicharts：台灣政府預算支出分析(2011-2019)
+### 3. leaflet.minicharts with shinyapp：台灣政府預算支出分析(2011-2019)
 作者：唐思琪
