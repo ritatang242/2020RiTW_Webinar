@@ -3,7 +3,7 @@
 
 # 活動資訊
 
-### R愛台灣：政府公開資料與R的互動地圖
+### RiTW2020#1 R愛台灣：政府公開資料與R的互動地圖
 日期：05/13/2020 📅     時間：19:30 ~ 21:00 🕢 <br>
 👨🏻‍🎓 主講人：卓雍然博士 <br>
 👩‍🏫 助教：唐思琪、沈佳蒨、夏宗麟 <br>
@@ -19,12 +19,12 @@
   + tmap：高雄市輕軌捷運沿線房價研究(沈佳蒨)
   + leaflet.minicharts：台灣政府預算支出分析(2011-2019)(唐思琪) [play the shinyapps](https://ritatang.shinyapps.io/twGovExp/)
 
-[tmap](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/tmap.png)
-[leaflet.minicharts1](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts1.png)  
-[leaflet.minicharts2](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts1.png)  
+![tmap](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/tmap.png)  <br>
+![leaflet.minicharts1](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts1.png)  <br>
+![leaflet.minicharts2](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts1.png)  <br>
 
   
-### 地理事件樣態分析：高雄房型、房價樣態分佈
+### RiTW2020#2 地理事件樣態分析：高雄房型、房價樣態分佈
 日期：05/27/2020 📅     時間：19:30 ~ 21:00 🕢 <br>
 👨🏻‍🎓 主講人：卓雍然博士 <br>
 👩‍🏫 助教：唐思琪、張博翔 <br>
