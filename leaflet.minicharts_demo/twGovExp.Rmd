@@ -1,0 +1,116 @@
+---
+title: "台灣縣市政府支出(2011-2019)"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    theme: flatly
+    social: menu
+    source_code: embed 
+    logo: nsysu48.png
+    favicon: nsysu48.png # browser上title旁邊的小logo
+runtime: shiny
+---
+
+```{r warning=FALSE, message=FALSE}
+options(shiny.usecairo = FALSE)
+require(shinyWidgets)
+require(dplyr)
+require(tidyr)
+require(sf)
+require(tmap)
+
+load("GeoTW108.rdata") # 鄉鎮區界 + 人口統計 # data: twTown, twCounty, twVill
+g = st_geometry(twCounty) # 從twCounty(22 obs)取出各縣市區界資料
+twc = st_simplify(g, dTol=200) %>% st_transform(crs=4326) # 將區界的邊線簡化
+center = st_centroid(g) %>% st_transform(crs=4326) # 各縣市中心點的經緯度
+coord = do.call(rbind, st_geometry(center)) %>% 
+  as_tibble() %>% setNames(c("lng","lat")) %>% 
+  cbind(county = twCounty$COUNTY,stringsAsFactors=F) # 將縣市名稱join回去 
+
+load("budget.rdata") # 2011~2019全台預算資料 # data: D
+TWC = D %>% mutate(year = year + 1911) %>% # 民國轉西元
+  group_by(year, county, C1) %>% # 做成panel data形式(year, county)
+  summarise(total = sum(ntd)) %>% ungroup %>%
+  spread(C1, total) %>%
+  left_join(coord) 
+```
+
+
+動態統計地圖 {data-orientation=rows data-icon="fa-binoculars"}
+============================================================
+
+Input {.sidebar data-width=250}
+-------------------------------------
+```{r}
+h6("選擇預算科目，觀察子科目比率如何隨時間變化。"); hr()
+selectInput("category","預算科目",choices=unique(D$C1),selected="經濟發展")
+
+selectInput("type", "圖表種類", 
+            choices = c("長條圖"="bar", "圓餅圖"="pie"), "pie")
+
+awesomeCheckbox("labels", 
+  label = "顯示數值", 
+  value = TRUE)
+
+```
+
+<img src="BAPlogo.png" alt="CM.NSYSU" width="80" height="80" align="left"></br>
+<h6>[中山大學商業大數據平台](https://bap.cm.nsysu.edu.tw/)</br>
+[計量經濟互助學習小組](https://www.facebook.com/groups/2198167973823697/?epa=SEARCH_BOX)</br>
+唐思琪</h6>
+
+
+Row1 {data-height="95%"}
+-------------------------------------
+### leaflet.minicharts
+```{r}
+require(leaflet)
+require(leaflet.minicharts)
+
+tilesURL = "http://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}"  # 此為地圖底圖
+
+basemap = leaflet(width="100%", height="960px") %>%
+  setView(lng=coord$lng[7],lat=coord$lat[7],zoom=8) %>%  # 以「南投縣」為中心放大8倍
+  addTiles(tilesURL) %>% # 底圖層
+  addPolylines(data = twc, weight = 1, color = "brown") # 加上各縣市邊界
+
+leafletOutput("map")
+output$map = renderLeaflet({ 
+  data = filter(D, C1==input$category) %>% # 根據input的選項過濾資料
+    mutate(year = year + 1911) %>% 
+    group_by(year, county, C2) %>% # C2 is a subcategory
+    summarise(total = sum(ntd)) %>% ungroup %>% 
+    spread(C2, total) %>% select(-(1:2))
+  maxValue <- max(as.matrix(data))
+  basemap %>% 
+  addMinicharts( # 疊上minicharts
+    TWC$lng, TWC$lat, layerId=TWC$county,
+    width=40, height=40) %>% 
+  updateMinicharts( # input改變後更新資料
+    TWC$county, chartdata=data, maxValues=maxValue,
+    type = input$type, time=TWC$year, showLabels=input$labels) 
+  })
+```
+
+
+動態泡泡圖 {data-orientation=rows data-icon="fa-cogs"}
+============================================================
+
+Row1 {data-height="95%"}
+-------------------------------------
+### 請開啟Flash並重新整理頁面，即可看到動態泡泡圖。
+```{r}
+require(googleVis)
+
+uiOutput("ui001")
+output$ui001 <- renderUI({ htmlOutput("gvis") })
+output$gvis <- renderGvis({
+  A = as.data.frame(TWC[,1:10]) # 不要經緯度
+  A$總預算 = apply(A[,3:10], 1, sum) # 將所有科目的預算加總作為新變數「總預算」
+  A = mutate_at(A, vars(一般政務:退休撫卹), ~(./總預算)) # 總數轉換成ratio
+  gvisMotionChart(
+    A,"county","year","經濟發展","債務","教科文","總預算", # x軸/y軸/unique color/size直接指定
+    options=list(width="900px", height="600px"))
+  })
+
+```
