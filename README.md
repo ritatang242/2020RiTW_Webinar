@@ -8,7 +8,7 @@
 👨🏻‍🎓 主講人：卓雍然博士 <br>
 👩‍🏫 助教：唐思琪、沈佳蒨、夏宗麟 <br>
 🎤 [直播影片](youtu.be/DrB_t3Il7zo) <br>
-🏠 [活動網頁](tiny.cc/RiTW2020) <br>
+🏠 [活動網頁](https://bap.cm.nsysu.edu.tw/?page_id=3637) <br>
 📚 [資料來源](https://github.com/gtonychuo/RiTW108) <br>
 🎯 內容大綱：
 + RiTW資料集內容和使用方式(卓雍然)-[活動PPT](https://drive.google.com/drive/folders/1AE_uhZWc4j2r1kqxAdU-iQxFor8Qc0F0)
