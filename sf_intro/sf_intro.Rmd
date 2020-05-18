@@ -1,0 +1,68 @@
+---
+title: "sf教材"
+author: "Lin"
+date: "2020/5/11"
+output: html_document
+runtime: shiny
+---
+
+```{r}
+load("K.rdata")
+library(sf)
+library(tidyverse)
+```
+
+```{r}
+class(K) ##檢查資料型態
+head(K)
+st_crs(K)
+```
+
+```{r}
+L = st_read("kaoh/light_rail/LRT_1090102.shp", crs=3826)
+class(L)
+L = subset(L,LRTSYS=="高雄捷運")
+plot(L[,1])
+L = st_buffer(L, 1000) ##尋找範圍
+plot(L[,1])
+L = st_simplify(L, dTolerance = 1000) ##調整圓滑度
+plot(L[,1])
+L = st_convex_hull(L) ##拉出範圍
+plot(L[,1])
+LC = st_centroid(L) ##找中心
+ggplot() +
+ geom_sf(data = L, alpha = 0.5) + geom_sf(data = LC) ##抽象畫
+```
+
+```{r}
+load("kaoh/house_price.rdata")
+class(D)
+head(D)
+A <- st_as_sf(D, coords=c("E","N"), crs=4326) %>% st_transform(A, crs = 3826)
+class(A)
+ggplot() + geom_sf(data = A)
+```
+
+```{r}
+L = st_read("LRT_1090102.shp", crs=3826)
+L = subset(L,LRTSYS=="高雄捷運")
+ggplot() +
+  geom_sf(data = st_intersection(A, st_buffer(L,500))) ##山水潑墨
+```
+
+```{r}
+dx = st_distance(A, L) # 房子到輕軌的距離
+dim(dx)
+# 49898筆資料，2條輕軌線
+A$dx = apply(dx,1,min) # 房子到其中一條輕軌線的距離
+range(A$dx) %>% round  # 距離介於0-87104
+```
+
+```{r}
+Houses = A %>% filter(dx < 500) %>% sample_n(1000)
+ggplot() +
+  geom_sf(data = Houses)
+Town = twTown[st_intersects(st_union(L), twTown)[[1]], ]
+ggplot() +
+  geom_sf(data = Town) + geom_sf(data = Houses)
+```
