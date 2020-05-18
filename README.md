@@ -7,7 +7,7 @@
 日期：05/13/2020 📅     時間：19:30 ~ 21:00 🕢 <br>
 👨🏻‍🎓 主講人：卓雍然博士 <br>
 👩‍🏫 助教：唐思琪、沈佳蒨、夏宗麟 <br>
-🎤 [直播影片](youtu.be/DrB_t3Il7zo) <br>
+🎤 [直播影片](https://www.youtube.com/playlist?list=PLvOqBoPSLQJcY8vf_nHyYgdYll5wHUNFu) <br>
 🏠 [活動網頁](https://bap.cm.nsysu.edu.tw/?page_id=3637) <br>
 📚 [資料來源](https://github.com/gtonychuo/RiTW108) <br>
 🎯 內容大綱：
