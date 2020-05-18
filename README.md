@@ -11,12 +11,12 @@
 🏠 [活動網頁](tiny.cc/RiTW2020) <br>
 📚 [資料來源](https://github.com/gtonychuo/RiTW108) <br>
 🎯 內容大綱：
-+ RiTW資料集內容和使用方式(卓雍然)
++ RiTW資料集內容和使用方式(卓雍然)-[活動PPT](https://drive.google.com/drive/folders/1AE_uhZWc4j2r1kqxAdU-iQxFor8Qc0F0)
 + R的圖資資料結構(卓雍然)
-+ 圖形資料框的運算方法：sf套件教學(夏宗麟)
++ 圖形資料框的運算方法：sf套件教學(夏宗麟)-在[sf_intro]資料夾
 + R的互動地圖套件：
-  + tmap：高雄市輕軌捷運沿線房價研究(沈佳蒨)
-  + leaflet.minicharts：台灣政府預算支出分析(2011-2019)(唐思琪) [開啟Shiny App](https://ritatang.shinyapps.io/twGovExp/)
+  + tmap：高雄市輕軌捷運沿線房價研究(沈佳蒨)-在[tmap_demo]資料夾
+  + leaflet.minicharts：台灣政府預算支出分析(2011-2019)(唐思琪) [開啟Shiny App](https://ritatang.shinyapps.io/twGovExp/)-在[leaflet.minicharts_demo]資料夾
 
 ![tmap](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/tmap.png)  <br>
 ![leaflet.minicharts1](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts1.png)  <br>
