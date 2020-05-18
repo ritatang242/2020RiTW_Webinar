@@ -10,6 +10,10 @@
 🎤 [直播影片](https://www.youtube.com/playlist?list=PLvOqBoPSLQJcY8vf_nHyYgdYll5wHUNFu) <br>
 🏠 [活動網頁](https://bap.cm.nsysu.edu.tw/?page_id=3637) <br>
 📚 [資料來源](https://github.com/gtonychuo/RiTW108) <br>
++ K.rdata與twTown.rdata，皆是從GeoTW108.rdata中擷取出來的資料。
++ house_price.rdata(房價資料)需要向單位購買，故不提供。
++ budget.rdata為政府公開之預算資料。
++ LRT_1090102.shp為政府公開之輕軌資料。
 🎯 內容大綱：
 + RiTW資料集內容和使用方式(卓雍然)-[活動PPT](https://drive.google.com/drive/folders/1AE_uhZWc4j2r1kqxAdU-iQxFor8Qc0F0)
 + R的圖資資料結構(卓雍然)
@@ -17,7 +21,7 @@
 + R的互動地圖套件：
   + tmap：高雄市輕軌捷運沿線房價研究(沈佳蒨)
   + leaflet.minicharts：台灣政府預算支出分析(2011-2019)(唐思琪)-[開啟Shiny App](https://ritatang.shinyapps.io/twGovExp/)
-
++ 畫面截圖：
 ![tmap](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/tmap.png)  <br>
 ![leaflet.minicharts1](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts1.png)  <br>
 ![leaflet.minicharts2](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts2.png)  <br>
