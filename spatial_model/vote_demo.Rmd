@@ -118,10 +118,66 @@ K3 %>% leaflet() %>%
 ```
 
 
+```{r}
+# temple data
+temple <- data.table::fread("D:/Webinar/Location_Temple.csv",encoding = "UTF-8")
+temple2<-data.table::fread("D:/Webinar/Location_Temple2.csv",encoding = "UTF-8")
+temple <- temple[,-c(1,2,8,14)] %>%
+  rename(name = 1,address = 2 ,god = 3 ,long = 4 ,lat = 5 ,TOWN_ID = 6 , VILLAGE_ID = 7 ,
+         TOWN = 8 ,COUNTY = 9 , VILLAGE = 10)
+temple2<- temple2[,-c(1,2,6,9,10,11,12,16,17,18,19,22)] %>% 
+  rename(name = 1 ,god = 2 ,address = 3 , long = 4 ,lat = 5 , TOWN_ID =6 ,VILLAGE_ID = 7,
+         VILLAGE = 8 ,TOWN =9,COUNTY = 10)
+temple<-bind_rows(temple,temple2)
 
+# merge 
+```
 
 
 ```{r}
-
+p<-temple %>% group_by(TOWN) %>% summarise(num = n_distinct(name)) %>% 
+  ggplot(aes(x= TOWN , y = num)) + geom_col() +coord_flip()+
+  labs(title = "高雄市各區寺廟數量")
+plotly::ggplotly(p)
 ```
+
+
+# 寺廟位置 & 得票率差距地圖
+```{r message=FALSE, warning=FALSE}
+library(htmltools)
+k <- sf::st_transform(K, "+init=epsg:4326")
+binpal <- colorBin("Reds", k$Delta, 8, pretty = FALSE)
+k %>% leaflet() %>% addTiles %>% 
+  addPolygons(color = ~ binpal(Delta), smoothFactor = 1, fillOpacity = 1,stroke = F)%>%
+  addCircleMarkers(data = temple ,radius = 2, label = ~htmlEscape(name),
+                   clusterOptions = markerClusterOptions(),
+                   group = "temple",popup = ~htmlEscape(TOWN))
+  
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
