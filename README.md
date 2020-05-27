@@ -11,6 +11,7 @@
 + house_price.rdata(房價資料)需要向單位購買，故不提供。
 + budget.rdata為政府公開之預算資料。
 + LRT_1090102.shp為政府公開之輕軌資料。
++ hen.rdata為韓國瑜的市長及總統選舉資料。
 
 ## 1. R愛台灣：政府公開資料與R的互動地圖
 日期：05/13/2020 📅     時間：19:30 ~ 21:00 🕢 <br>
@@ -18,12 +19,12 @@
 👩‍🏫 助教：唐思琪、沈佳蒨、夏宗麟 <br>
 
 🎯 內容大綱：
-+ RiTW資料集內容和使用方式(卓雍然)-[活動PPT](https://drive.google.com/drive/folders/1AE_uhZWc4j2r1kqxAdU-iQxFor8Qc0F0)
++ RiTW資料集內容和使用方式(卓雍然)-[活動PPT](https://drive.google.com/drive/folders/1AE_uhZWc4j2r1kqxAdU-iQxFor8Qc0F0){:target="_blank"}
 + R的圖資資料結構(卓雍然)
 + 圖形資料框的運算方法：sf套件教學(夏宗麟)
 + R的互動地圖套件：
   + tmap：高雄市輕軌捷運沿線房價研究(沈佳蒨)
-  + leaflet.minicharts：台灣政府預算支出分析(2011-2019)(唐思琪)-[開啟Shiny App](https://ritatang.shinyapps.io/twGovExp/)
+  + leaflet.minicharts：台灣政府預算支出分析(2011-2019)(唐思琪)-[開啟Shiny App](https://ritatang.shinyapps.io/twGovExp/){:target="_blank"}
 + 畫面截圖：
 ![tmap](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/tmap.png)  <br>
 ![leaflet.minicharts1](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts1.png)  <br>
