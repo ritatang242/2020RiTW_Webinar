@@ -1,0 +1,127 @@
+---
+title: "Econometrics in R Webinar "
+author: "Sean Lin"
+date: "2020/5/26"
+output:
+  prettydoc::html_pretty:
+    number_sections: yes
+    theme: Cayman
+    toc: yes
+  html_document:
+    css: style.css
+  pdf_document:
+    toc: yes
+---
+# 讀基本檔案
+```{r}
+# read files
+pacman::p_load(readr, dplyr, sf, tmap, stringr,tidyr,ggplot2,plotly)
+load("hen.rdata")
+load("GeoTW108.rdata")
+load("RiTW108.rdata")
+```
+<br>
+
+> 共三個資料檔：<br>
+(1)hen.rdata：2018高雄市長選舉 & 2020總統大選，高雄市各里之投票率、韓市長得票率。<br>
+(2)GeoTW108.rdata：各縣市區域基本人口統計資料(sf)。<br>
+(3)Ritw108.rdata：基本人口統計資料，包含變數表。<br>
+
+<br>
+
+# 各里數量統計
+```{r}
+subset(twVill, COUNTY=="高雄市")$TOWN %>% sort %>% table 
+```
+## 基本資料處理
+```{r message=FALSE, warning=FALSE}
+# 高雄市資料
+K = filter(twVill, COUNTY=="高雄市") %>%
+  mutate(V_ID = str_replace(V_ID,"(05|12)(1|2)-","\\10-")) %>% 
+  full_join(hen,bt = "V_ID")  # 合併選舉結果
+```
+
+# 投票率 & 得票率狀況(以四山區域來看)
+```{r}
+M = c("鳳山區","旗山區","岡山區","鼓山區")
+K1 <- K %>% filter(TOWN %in% M) %>% .[,-1]
+facet = c("Rate18","Rate20","Hen18","Hen20")
+tm_shape(K1) + tm_polygons(facet,popup.vars = c("TOWN","VILLAGE"))+tm_facets(ncol = 2,nrow = 2)+
+  tmap_mode("view")
+
+```
+
+
+
+
+# 四山各里韓市長得票差異(2018 VS 2020)
+**幾乎為負差異，故可以看看哪些地區改變狀況大或小** <br>
+```{r}
+tm_shape(K1)+
+  tm_polygons(col = "Delta",
+              popup.vars = c("VILLAGE","Delta"),palette = "Greens",style = "equal")+
+  tmap_mode("view")
+  
+```
+
+
+# 探討扶老比與18,20年韓市長得票差異圖
+**色塊為韓市長得票率差異** <br>
+**圓圈深淺為扶老比，越深代表越高** <br>
+```{r message=FALSE, warning=FALSE}
+# 探討扶老比地區與18,20年韓市長得票差異圖
+tm_shape(K)+
+  tm_polygons(col = "Delta",
+              popup.vars = c("TOWN","VILLAGE","Delta"),palette = "Greens",style = "fixed",breaks = seq(-0.35,0,0.05))+
+  tm_shape(K)+
+  tm_symbols(col = "FLD3",border.col = "white",size = 0.005)+tmap_mode("view")
+```
+# 整理成經緯度資料
+```{r}
+K2 <- sf::st_transform(K, "+init=epsg:4326") %>% st_centroid() %>% 
+  as.data.frame()%>%separate(geometry,c("lng","lat"),",") %>%
+  mutate(lng = as.numeric(gsub("[A-Za-z\\(]+","",lng,)),
+         lat = as.numeric(gsub("[\\)]","",lat))) %>% na.omit()
+```
+<br>
+
+> st_transform()：轉成經緯度。<br>
+st_centroid()：計算原本polygons的中點。<br>
+
+<br>
+
+# 投票人口前100名的投票變化狀況
+
+**找出可投票人口前100鄉里**<br>
+**並且依照原898個村里兩年得票差異的中位數劃分為兩個顏色：綠(變化大)，藍(變化小)**<br>
+```{r message=FALSE, warning=FALSE}
+# 投票人口前100名的投票變化狀況
+pacman::p_load(spatstat,ggplot2,leaflet,dplyr,htmlwidgets,stringr,ggmap,leaflet.extras,viridisLite,htmltools,sf)
+lat = median(K2$lat);lng = median(K2$lng)
+K3<-K2 %>% arrange(-Pop20) %>% head(100)
+picon = pulseIcons(color = ifelse(K3$Delta > quantile(K2$Delta,0.5),"blue","green"))
+
+K3 %>% leaflet() %>%
+  addTiles() %>% addPulseMarkers(icon = picon,label= ~ paste0(TOWN,VILLAGE,paste0(round(Delta,4)*100,"%")))%>% 
+  setView(lng,lat,10)
+```
+
+
+# 扶老比前100名的投票變化狀況
+```{r message=FALSE, warning=FALSE}
+# 扶老比前100名的投票變化狀況
+K3<-K2 %>% arrange(-FLD3) %>% head(100)
+picon = pulseIcons(color = ifelse(K3$Delta < quantile(K2$Delta,0.5),"green","blue"))
+K3 %>% leaflet() %>%
+  addTiles() %>% addPulseMarkers(icon = picon,label= ~ paste0(TOWN,VILLAGE,paste0(round(Delta,4)*100,"%")))%>% 
+  setView(lng,lat,10)
+```
+
+
+
+
+
+```{r}
+
+```
+
