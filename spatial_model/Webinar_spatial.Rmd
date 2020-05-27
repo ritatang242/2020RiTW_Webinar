@@ -1,0 +1,126 @@
+---
+title: "Webinar- spatial model"
+author: "Alonzo"
+date: "5/27/2020"
+output: 
+    prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+    math: latex
+---
+
+```{r setup, include=FALSE}
+rm(list = ls());gc()
+pacman::p_load(data.table,dplyr,spdep,spatialreg,readr, sf, tmap, stringr,tidyr,ggplot2,plotly,corrplot)
+Sys.setlocale("LC_ALL","Chinese (Traditional)_Taiwan.950")
+options(scipen=7)
+load("D:/Desktop/Econometrics2/Econometrics2/Webinar/hen.rdata")
+load("D:/Desktop/Econometrics2/Econometrics2/Webinar/GeoTW108.rdata")
+load("D:/Desktop/Econometrics2/Econometrics2/Webinar/K.rdata")
+load("D:/Desktop/Econometrics2/Econometrics2/Webinar/RiTW108.rdata")
+```
+
+## Spatial Model Demo
+
+* 通常OLS不會考慮空間的特性，當然有些時候學者會運用虛擬變數來代表美國的不同地區 <br>
+例如東北方、西南方、西部地區等等，但大部分不考慮空間因素例如失業率，<br>
+個人收入，社會資本以及一些隨機因素等，這些鄰近的州有可能造成的影響。<br>
+
+* 從空間模型來看，所謂的鄰居 可以定義是方圓500哩內 設定一個圈圈bubble <br> 然後可以知道哪些是鄰居，或者以距離來設定強弱權重，比較近的是strong neighbor <br> 這樣，因此我們可以從三種角度來思考相鄰州別可能的影響。<br>
+
+
+## Checking the data
+
+```{r}
+colnames(K)
+names(Income)[2] <- "V_ID"
+Income <- filter(Income, 資料時間=="106Y")
+K <- left_join(K,Income[,c(2,12)], by="V_ID")
+names(K)[27] <- "Income"
+```
+
+* P_DEN: 人口密度 <br>
+  M_F_RAT: 性別比 <br>
+  FLD1: 扶養比 <br>
+  FLD2: 扶幼比 <br>
+  FLD3: 扶老比 <br>
+  FLD4: 老化指數 <br>
+  Income: 106年所得中位數 <br>
+  Delta: 得票率差 <br>
+
+## Correlation of IV & DV
+
+```{r }
+n <- c("P_DEN","M_F_RAT","FLD1","FLD2","FLD3","FLD4","Income","Delta")
+KK <- select(K,all_of(n))
+KK$geometry <- NULL
+KK<- na.omit(KK)
+KK$Delta <- abs(KK$Delta) # 取絕對值
+pairs(Delta~P_DEN+FLD1+FLD2+FLD3+FLD4+Income+M_F_RAT,data=KK,
+      main="Simple Scatterplot Matrix")
+M <- cor(KK)
+corrplot(M)
+```
+
+
+
+
+## Spatial Model expression
+
+* (A) The value of X's in a region might affect (or be related to ) the value of y in a neighboring region (lag X) <br>
+
+$$\mathrm Y= X\beta+WX\theta+\varepsilon$$
+
+## Make the weights matrix
+
+
+$$
+W=
+\left[
+\begin{matrix}
+ W_{11}      & W_{12}      & \cdots & W_{1n}      \\
+ W_{21}      & W_{22}      & \cdots & W_{2n}      \\
+ \vdots & \vdots & \ddots & \vdots \\
+ W_{n1}      & W_{n2}      & \cdots & W_{nn}      \\
+\end{matrix}
+\right]
+$$
+
+
+
+```{r}
+KK <- select(K,all_of(n));KK$Delta <- abs(KK$Delta); KK <- na.omit(KK)
+queen.nb=poly2nb(KK)
+queen.listw=nb2listw(queen.nb)
+listw1= queen.listw
+```
+
+## OLS Model
+
+```{r}
+reg.eq1=Delta~P_DEN+M_F_RAT+FLD1+FLD2+FLD3+FLD4+Income
+reg1=lm(reg.eq1,data=KK)
+summary(reg1)
+```
+
+## Spatially Lagged X (SLX) Model
+
+```{r}
+reg2=lmSLX(reg.eq1,data=KK, listw1)
+summary(reg2)
+impacts(reg2,listw=listw1)
+```
+
+## Spatial Autoregressive (SAR) Model
+
+* (B) The value of y in a region might affect (or be related to ) the value of y in a neighboring region (lag y) <br>
+
+$$\mathrm Y=\rho WY+X\beta+\varepsilon$$
+
+```{r}
+reg3=lagsarlm(reg.eq1,data= KK, listw1)
+summary(reg3)
+impacts(reg3,listw=listw1)
+```
+
+## 「The work of science is to substitute facts for appearances，and demonstrations for impressions. —— John Ruskin」
