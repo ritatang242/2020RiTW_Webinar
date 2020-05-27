@@ -1,0 +1,200 @@
+---
+title: "地理事件樣態分析 : 以高雄房型為例"
+author: "張博翔"
+date: "2020/05/27"
+output:
+  prettydoc::html_pretty:
+    number_sections: yes
+    theme: Cayman
+    toc: yes
+  html_document:
+    css: style.css
+  pdf_document:
+    toc: yes
+---
+
+```{r include=FALSE}
+rm(list = ls());gc()
+pacman::p_load(readr,dplyr,sf,spatstat,tmap,stringr,maptools)
+pacman::p_load(data.table,raster,tidyverse,splancs,ggplot2,spatialkernel)
+#devtools::install_github("becarioprecario/spatialkernel")
+load("geotw108.rdata")
+load("kaoh/house_price.rdata")
+```
+
+
+# 空間計量前哨站:
+
+<br>  一般空間計量在地圖上雖為二維表現(經緯度)，然而在空間計量中，加入點、區域與特徵時，能將資料不僅限於經緯度的二維的地理推論，能增加研究的彈性；在針對目標檢定前，須將一般資料轉換為空間計量資料(ppp object)，以利處理，其中有一些PPP解釋如下: <br>
+
+● 事件(event) : 通常會是點、線和面資料，只要是感興趣的目標，都被稱為事件
+ <br>
+● 區域(window) : 特定範圍內包含的事件，類似樣本區域的概念，區域外被認為是觀察不到的資料 <br>
+● 記號(marks):  設定為這筆資料要看的目標特徵(EX: 本案例為房型) <br>
+
+
+## 高雄特定區域房型資料前處理
+
+● 建立PPP object <br>
+
+```{r echo=TRUE}
+#資料前處理
+D = st_as_sf(D, coords=c("E","N"), crs=4326) %>% 
+  st_transform(crs=3826)
+#從高雄挑出幾個熱鬧區域
+area = c("鹽埕區","三民區","新興區","前金區","苓雅區")
+Towns = subset(twTown,COUNTY=="高雄市" & TOWN %in% area) 
+#建立區域空間(window)
+Window = st_union(Towns)
+#建立物件記號(marks)，並取出相對物件
+types = c("店面", "套房", "華廈", "公寓")
+Houses = subset(D, st_within(D,Window,sparse=F) & type%in%types) %>%
+  sample_n(1000)
+#轉為factor
+types = factor(as.character(Houses$type)) 
+```
+
+```{r message=FALSE, warning=FALSE}
+A=filter(Houses,type=="公寓")
+D=filter(Houses,type=="套房")
+W=filter(Houses,type=="華廈")
+S=filter(Houses,type=="店面")
+#檢視房屋分布
+tm_shape(Towns,name = "地理區域")+
+  tm_polygons("P_DEN",palette="Greens",alpha = 0.5,
+              popup.vars =c("TOWN","P_DEN"))+
+tm_shape(A,name = "公寓")+
+  tm_dots(col="type",style="cat",title="房屋類型",
+          popup.vars =c("vill_name","type","age","total"),size=.1)+
+tm_shape(D,name = "套房")+
+  tm_dots(col="type",style="cat",title="房屋類型",
+          popup.vars =c("vill_name","type","age","total"),size=.1)+
+tm_shape(W,name = "華廈")+
+  tm_dots(col="type",style="cat",title="房屋類型",
+          popup.vars =c("vill_name","type","age","total"),size=.1)+
+tm_shape(S,name = "店面")+
+  tm_dots(col="type",style="cat",title="房屋類型",
+          popup.vars =c("vill_name","type","age","total"),size=.1)+
+tm_shape(Houses,name = "房屋資料抽樣")+
+  tm_dots(col="type",style="cat",title="房屋類型",
+          popup.vars =c("vill_name","type","age","total"),size=.1)+
+  tmap_mode("view")
+```
+
+
+```{r}
+#將資料轉為PPP物件
+# PPP物件中包含了事件點(event)，事件記號(marks)(房屋類型)的分布狀況，以及區域空間(window)的詳細資料
+PPP = as.ppp(
+  X = t(sapply(st_geometry(Houses),c)),      # Event事件點
+  W = as_Spatial(Window))                    # 區域空間Window
+marks(PPP) = types                           # 事件記號
+
+# 畫出PPP物件
+plot(PPP)
+plot(st_geometry(Towns),col='#00800020',border='black',lwd=1,add=T)
+```
+
+
+```{r message=FALSE, warning=FALSE}
+#summary(PPP)
+table(marks(PPP)) #事件記號(marks)(房屋類型)的分布狀況
+```
+
+# 空間計量分佈檢定
+
+## 檢測資料是否具隨機性
+
+<br>  當區域中資料與其他區域完全沒有任何關係時，整體的地理資料被稱為完全地理隨機現象(CSR)，及所有出現的事件都遵循隨機過程，此檢定虛無假設為地理資料為完全地理隨機(CSR)，此表示基本空間點遵循同質卜瓦松隨機過程(homogeneous Poisson point process)(參見附件1)，若拒絕虛無假設則表示資料非完全隨機 <br>
+
+```{r}
+#原先此函數設定為雙尾檢驗
+#當alternative = "clustered"時，將會以同假設的單尾檢驗來檢驗資料是否為群聚等分布
+quadrat.test(PPP,alternative = "clustered")
+#資料屬於群聚資料
+```
+
+● 四大房型密度檢視 <br>
+
+```{r}
+# 將資料記號分出來
+splits = split(PPP)
+plot(splits)
+```
+
+```{r}
+# 轉換為分布密度(利用Karnel smoothing)
+den = density(splits)
+plot(den)
+```
+
+● 四大房型出現機率計算 <br>
+
+```{r}
+# 運用房型出來的各區密度在來計算總和機率(即區域各房型密度)
+DX = den[[1]]+den[[2]]+den[[3]]+den[[4]] 
+tx = levels(types)
+prob = lapply(den, function(d) d/DX) %>% setNames(tx)
+p0 = par(mfrow=c(2,2), mar=c(1,1,2,2), cex=0.8)
+for(i in 1:length(prob)) {
+  plot(prob[[i]], main=tx[i])
+  plot(st_geometry(Towns),col='#00800000',border='yellow',lwd=1,add=T)
+  }
+par(p0)
+
+```
+
+# 空間區特性 與 蒙地卡羅模擬檢定
+  
+##  空間區隔分析( Spatial Segregation Analysis)
+
+<br>  空間區隔分析在原先假設目標在不同區域會有不同的機率，在上述計算密度分佈後，我們能藉由從中調整帶寬(即Karnel smoothing的平滑程度，帶寬越小越易出現尖峰，反之)來找出最適的帶寬，並運用無數次模擬等方法來評估資料是否具有空間區隔。 <br>
+
+● spseg函數簡介 <br>
+
+<br>  在R語言中，使用spatialkernel套件的spseg1便能計算最佳帶寬或建立模擬分布等功能；在計算最佳帶寬的過程中，會以各帶寬來計算(以對數最大概似函數)交叉驗證值，交叉驗證值越高表示這個帶寬越佳(套件檔案中有更詳細解釋，參見附件2)；此外，此函數中也能使用蒙地卡羅模擬出完全隨機分布資料以便與原資料作檢定。<br>
+
+```{r}
+#計算最佳帶寬
+
+#利用spatialkernel套件的spseg()來操作
+bw_choice = spseg(PPP, 
+                   h = seq(50, 800, by = 10),
+                   opt = 1)
+
+# 畫出各帶寬的統計結果
+plotcv(bw_choice)
+# 列出最佳帶寬
+abline(v = bw_choice$hcv, lty = 2, col = "red")
+print(bw_choice$hcv)
+
+```
+
+## 蒙地卡羅模擬 & 檢定
+
+● 蒙地卡羅模擬簡介 <br>
+
+ 蒙地卡羅模擬為利用亂數取樣 (Random Sampling)模擬來解決數學問題舉凡在所有目前具有隨機效應的過程，均可能以蒙地卡羅方法大量模擬單一事件，藉統計上平均值獲得某設定條件下實際最可能測量值。<br>
+
+其是一種基於大數法則的實證方法，當實驗的次數越多，其平均值也就會越趨近於理論值。其法則亦可以估算投資組合的各種風險因子，特別是一些難以估算的非線性投資組合。另外也可處理具時間變異的變異數、不對稱等非常態分配和極端狀況等特殊情形，甚至也可用來計算信用風險。<br>
+
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+#將模擬的分布與實際資料作檢定
+# 設定最佳帶寬，再設定蒙地卡羅
+#蒙地卡羅1000次所做出的房型分布 並與原資料作檢定(檢定資料是否相同，蒙地卡羅分布&資料原分布)
+seg1000 = spseg(pts=PPP,h=400,opt=3,ntest=1000,proc=T) 
+```
+
+```{r}
+p0 = par(mfrow=c(2,2), mar=c(3,4,2,2))
+lapply(tx, function(z) plotmc(seg1000, z)) #將四房型機率密度檢定結果畫出來
+par(p0)
+```
+
+>四房型的圖形解釋為，在虛無假設下(H0:此區域相較於蒙地卡羅模擬後出現機率平均值無顯著差異)拒絕虛無的結果，其中0.05區塊內表示，該類別此區域顯著高於平均出現機率；而0.95則相反，該類別此區域顯著低於平均出現機率。
+
+# 小練習
+
+ 雖然房價資料可以從網路上免費下載，但這此舉例裡使用的資料為過去畢業學長姐所抓下來的，因此這邊暫不提供，我們這邊提供一個高雄A1、A2、A3事故發生地點的資料可以讓大家將資料轉成PPP做類似的運用~<br>
+
