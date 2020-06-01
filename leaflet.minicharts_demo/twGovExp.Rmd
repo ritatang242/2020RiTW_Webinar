@@ -110,7 +110,8 @@ output$gvis <- renderGvis({
   A = mutate_at(A, vars(一般政務:退休撫卹), ~(./總預算)) # 總數轉換成ratio
   gvisMotionChart(
     A,"county","year","經濟發展","債務","教科文","總預算", # x軸/y軸/unique color/size直接指定
-    options=list(width="900px", height="600px"))
+    options=list(width="900px", height="600px"),
+    chartid="twGovExp2")
   })
 
 ```
