@@ -23,12 +23,12 @@
 + R的圖資資料結構(卓雍然)
 + 圖形資料框的運算方法：sf套件教學(夏宗麟)
 + R的互動地圖套件：
-  + tmap：高雄市輕軌捷運沿線房價研究(沈佳蒨)
-  + leaflet.minicharts：台灣政府預算支出分析(2011-2019)(唐思琪)-[開啟Shiny App](https://ritatang.shinyapps.io/twGovExp/)
+  + tmap：高雄市輕軌捷運沿線房價研究(沈佳蒨)-[互動地圖](https://ritatang242.github.io/2020RiTW_Webinar/tmap_demo/tmap_demo.html)
+  + leaflet.minicharts：台灣政府預算支出分析(2011-2019)(唐思琪)-[Shiny App](https://ritatang.shinyapps.io/twGovExp/)
 + 畫面截圖：
-![tmap](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/tmap.png)  <br>
-![leaflet.minicharts1](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts1.png)  <br>
-![leaflet.minicharts2](https://github.com/ritatang242/2020RiTW_Webinar/blob/master/pic/leaflet_minicharts2.png)  <br>
+![tmap](https://ritatang242.github.io/2020RiTW_Webinar/pic/tmap.png)  <br>
+![leaflet.minicharts1](https://ritatang242.github.io/2020RiTW_Webinar/pic/leaflet_minicharts1.png)  <br>
+![leaflet.minicharts2](https://ritatang242.github.io/2020RiTW_Webinar/pic/leaflet_minicharts2.png)  <br>
 
   
 ## 2. 地理事件樣態分析：高雄房型、房價樣態分佈
@@ -38,6 +38,13 @@
 
 🎯 內容大綱：
 + RiTW108資料集和相關的Github(卓雍然)
-+ 空間計量模型(黃柏勳)
-+ 地理事件分析：高雄市房型樣態分佈(張博翔)
-+ R的互動地圖：高雄市選舉資料(林士弘)
++ 地理事件分析：高雄市房型樣態分佈(張博翔)-[教材](https://ritatang242.github.io/2020RiTW_Webinar/spatial_model/%E5%9C%B0%E7%90%86%E7%89%A9%E4%BB%B6%E5%88%86%E6%9E%90.html)
++ R的互動地圖：高雄市選舉資料(林士弘)-[教材](https://ritatang242.github.io/2020RiTW_Webinar/spatial_model/vote_demo.html)
++ 空間計量模型(黃柏勳)-[教材](https://ritatang242.github.io/2020RiTW_Webinar/spatial_model/Webinar_spatial.html)
++ 畫面截圖：
+![spatial1](https://ritatang242.github.io/2020RiTW_Webinar/pic/spatial1.png)  <br>
+![spatial2](https://ritatang242.github.io/2020RiTW_Webinar/pic/spatial2.png)  <br>
+![spatial3](https://ritatang242.github.io/2020RiTW_Webinar/pic/spatial3.png)  <br>
+![spatial4](https://ritatang242.github.io/2020RiTW_Webinar/pic/spatial4.png)  <br>
+![spatial5](https://ritatang242.github.io/2020RiTW_Webinar/pic/spatial5.png)  <br>
+![spatial6](https://ritatang242.github.io/2020RiTW_Webinar/pic/spatial6.png)  <br>
