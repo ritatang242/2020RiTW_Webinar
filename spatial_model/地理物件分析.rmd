@@ -124,6 +124,7 @@ plot(splits)
 
 ```{r}
 # 轉換為分布密度(利用Karnel smoothing)
+par(family="蘋方-繁 中黑體")
 den = density(splits)
 plot(den)
 ```
