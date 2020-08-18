@@ -19,7 +19,7 @@ st_crs(K)
 ```
 
 ```{r}
-L = st_read("kaoh/light_rail/LRT_1090102.shp", crs=3826)
+L = st_read("light_rail/LRT_1090102.shp", crs=3826)
 class(L)
 L = subset(L,LRTSYS=="高雄捷運")
 plot(L[,1])
